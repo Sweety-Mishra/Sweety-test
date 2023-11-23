@@ -1,0 +1,178 @@
+<style>
+    .main-container {
+    display: flex;
+    gap: 30px;
+}
+.left-container {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.right-container {
+    width: 50%;
+}
+.right-image img{
+ width: 100%;
+}
+.product-image img{
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+}
+.product-title {
+    text-align: center;
+}
+@media screen and (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+    }
+    .right-container {
+        width:100%;
+
+}
+.left-container {
+    width: 100%;
+}
+
+}
+</style>
+
+
+
+
+
+
+
+
+
+
+<div class="page-width main-container">
+    <div class="main-heading">
+        {%  if section.settings.heading != blank %} 
+            <h1> {{ section.settings.heading }}</h1>
+         {% endif %} 
+    </div>
+    <div class="left-container">
+
+    <div class="product-title">
+        {%  assign first_product = all_products[ section.blocks.first.settings.product]   %} 
+        <h1>{{ first_product.title }}</h1>
+       <a href="{{ first_product.url }}" class="button">Shop Now</a>
+    </div>
+        <div class="responsive">
+        {%  for block  in section.blocks %}  
+  <div class="product-container" >
+    {%  if block.settings.product  != blank %} 
+        {%  assign product   = all_products[ block.settings.product] %} 
+        <div class="product-image" data-id="{{ product.id }}">
+            {%  if product.featured_image %}   
+                <img src="{{ product.featured_image | img_url: 'large' }}" alt="{{product.title}}">
+            {% endif %}
+            <div class="title">
+                <p>{{ product.title }}</p>
+            </div>
+        </div>
+     {% endif %} 
+  </div>
+{% endfor %} 
+</div>
+    </div>
+    <div class="right-container">
+        <div class="responsive-second">
+        {%  for block  in section.blocks %}  
+            <div class="right-image">
+                {%  assign product   = all_products[ block.settings.product] %}
+                {%  if product.featured_image %}   
+                    <img src="{{ product.featured_image | img_url: 'large' }}" alt="{{product.title}}">
+                {% endif %} 
+            </div>
+
+     {% endfor %}
+</div>
+    </div>
+</div>
+
+<script>
+    let images = document.querySelectorAll(".product-image");
+    console.log(images);
+    let rightImage = document.querySelector('.responsive-second .right-image img');
+    console.log(rightImage);
+    let title = document.querySelector(".product-title h1")
+    console.log(title)
+ 
+  images.forEach(function(image){
+    image.addEventListener("click", function(){
+       
+        var secondTitle = this.querySelector('.title p')
+        console.log(secondTitle);
+        var id = this.dataset.id;
+        console.log(id)
+       
+        title.innerHTML = secondTitle.innerHTML;
+        
+    })
+  }) 
+</script>
+ 
+
+
+
+<script>
+   
+
+  $('.responsive-second').slick({
+  slidesToShow: 1,
+  slidesToScroll: 1,
+  arrows: false,
+  fade: true,
+  asNavFor: '.responsive'
+});
+$('.responsive').slick({
+  slidesToShow: 3,
+  slidesToScroll: 2,
+  asNavFor: '.responsive-second',
+  dots: true,
+  centerMode: true,
+  focusOnSelect: true
+});
+</script>
+
+
+
+
+
+{%  schema  %} 
+{
+    "name": "Product Slider",
+    "settings":[
+        {
+            "type": "text",
+            "id": "heading",
+            "label": "heading",
+            "default": "Heading"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "Product",
+            "name": "Product",
+            "settings": [
+                {
+                    "type": "product",
+                    "id": "product",
+                    "label": "Select Product"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Product Slider",
+            "category": "Product layout"
+        }
+    ]
+}
+ {% endschema %} 
